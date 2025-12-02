@@ -21,24 +21,24 @@ interface SidebarProps {
 
 export function Sidebar({ onSelect }: SidebarProps) {
   const renderNode = (node: DocNode) => {
-    const hasIndex = node.files.some((f) => f.filename === "index.md")
+    const indexFile = node.files.find((f) => f.filename === "index.md")
     const nonIndexFiles = node.files.filter((f) => f.filename !== "index.md")
     const hasChildren = node.children.length > 0 || nonIndexFiles.length > 0
 
     const folderLabel = node.path === "/" ? "Home" : node.path.split("/").pop()
+    const folderPath = node.path // clicking folder should go to index.md
 
-    // If folder ONLY contains index.md → no collapsible UI, just a direct link
+    // Folder with no children or non-index files → direct link
     if (!hasChildren) {
       return (
         <SidebarMenuItem key={node.path}>
-          <SidebarMenuButton onClick={() => onSelect(node.path)}>
+          <SidebarMenuButton onClick={() => onSelect(folderPath)}>
             {folderLabel}
           </SidebarMenuButton>
         </SidebarMenuItem>
       )
     }
 
-    // Collapsible UI -------
     const [open, setOpen] = useState(true)
 
     return (
@@ -49,26 +49,28 @@ export function Sidebar({ onSelect }: SidebarProps) {
         className="group/collapsible"
       >
         <SidebarMenuItem>
+          {/* Folder button links to index.md if exists */}
           <CollapsibleTrigger asChild>
-            <SidebarMenuButton>
+            <SidebarMenuButton
+              onClick={() => onSelect(folderPath)}
+              className="flex items-center justify-between"
+            >
+              <span>{folderLabel}</span>
               <ChevronRight
-                className={`h-4 w-4 transition-transform mr-1 ${
+                className={`h-4 w-4 transition-transform ml-1 ${
                   open ? "rotate-90" : ""
                 }`}
               />
-              {folderLabel}
             </SidebarMenuButton>
           </CollapsibleTrigger>
 
           <CollapsibleContent>
             <SidebarMenuSub>
-
               {/* Non-index files */}
               {nonIndexFiles.map((file) => {
                 const slug = file.filename.replace(".md", "")
                 const filePath =
                   node.path === "/" ? `/${slug}` : `${node.path}/${slug}`
-
                 return (
                   <SidebarMenuSubItem
                     key={filePath}

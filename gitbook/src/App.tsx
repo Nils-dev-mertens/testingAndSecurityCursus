@@ -48,13 +48,13 @@ export default function App() {
         shadow-sm 
         flex-shrink-0
       ">
-        <SidebarProvider>
+        <SidebarProvider className="p-4">
           <Sidebar onSelect={handleSelect} />
         </SidebarProvider>
       </div>
 
       {/* Docs Content */}
-      <div className="flex-1 overflow-y-auto p-8">
+      <div className="flex-1 overflow-y-auto p-3">
         <DocsPage path={currentPath} />
       </div>
     </div>

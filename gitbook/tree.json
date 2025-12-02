@@ -3,7 +3,7 @@
   "files": [
     {
       "filename": "index.md",
-      "content": "this is an the headindex file"
+      "content": "Testing and security.\n\nthe"
     }
   ],
   "children": [
@@ -11,8 +11,12 @@
       "path": "/security",
       "files": [
         {
+          "filename": "hashing.md",
+          "content": "# Hashing\nthis is about the hashing\n\n```cs\n    hash()\n```"
+        },
+        {
           "filename": "index.md",
-          "content": ""
+          "content": "# testing folder \n\nthis is the testing folder index page"
         }
       ],
       "children": []
