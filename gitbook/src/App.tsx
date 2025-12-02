@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react"
 import { DocsPage } from "./components/DocsPage"
 import { Sidebar } from "./components/Sidebar"
+import { SidebarProvider } from "./components/ui/sidebar"
 
 export default function App() {
   const [currentPath, setCurrentPath] = useState("/")
@@ -8,7 +9,6 @@ export default function App() {
   const normalizePath = (raw: string | null | undefined) => {
     if (!raw) return "/"
     try {
-      // decode URI component and ensure leading slash, remove trailing slash
       let p = decodeURIComponent(raw)
       if (!p.startsWith("/")) p = "/" + p
       if (p.length > 1 && p.endsWith("/")) p = p.slice(0, -1)
@@ -18,7 +18,7 @@ export default function App() {
     }
   }
 
-  // Initialize path from URL hash on mount and listen for hash changes
+  // Initialize path from URL hash
   useEffect(() => {
     const readHash = () => {
       const raw = window.location.hash.slice(1)
@@ -30,20 +30,31 @@ export default function App() {
     return () => window.removeEventListener("hashchange", readHash)
   }, [])
 
-  // Update URL when a sidebar item is selected
+  // Update URL when selecting sidebar item
   const handleSelect = (path: string) => {
     const normalized = normalizePath(path)
     setCurrentPath(normalized)
-    // Use encodeURI so slashes are preserved but special characters are encoded
     window.location.hash = encodeURI(normalized)
   }
 
   return (
-    <div style={{ display: "flex", height: "100vh" }}>
-      <div style={{ width: 250, borderRight: "1px solid #ccc" }}>
-        <Sidebar onSelect={handleSelect} />
+    <div className="flex h-screen bg-background text-foreground">
+      {/* Sidebar */}
+      <div className="
+        w-64 
+        border-r 
+        border-border 
+        bg-card 
+        shadow-sm 
+        flex-shrink-0
+      ">
+        <SidebarProvider>
+          <Sidebar onSelect={handleSelect} />
+        </SidebarProvider>
       </div>
-      <div style={{ flex: 1 }}>
+
+      {/* Docs Content */}
+      <div className="flex-1 overflow-y-auto p-8">
         <DocsPage path={currentPath} />
       </div>
     </div>
