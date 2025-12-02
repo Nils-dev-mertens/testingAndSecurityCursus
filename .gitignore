@@ -20,6 +20,7 @@ dist-ssr
 
 # IDE / Editor
 .vscode
+.continue
 .idea
 *.swp
 *.swo
