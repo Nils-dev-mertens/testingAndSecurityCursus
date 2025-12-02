@@ -1,0 +1,60 @@
+{
+  "path": "/",
+  "files": [
+    {
+      "filename": "index.md",
+      "content": "this is an the headindex file"
+    }
+  ],
+  "children": [
+    {
+      "path": "/security",
+      "files": [
+        {
+          "filename": "index.md",
+          "content": ""
+        }
+      ],
+      "children": []
+    },
+    {
+      "path": "/testing",
+      "files": [
+        {
+          "filename": "apitmocking.md",
+          "content": ""
+        },
+        {
+          "filename": "index.md",
+          "content": ""
+        }
+      ],
+      "children": [
+        {
+          "path": "/testing/bddtesting",
+          "files": [
+            {
+              "filename": "extensie.md",
+              "content": ""
+            },
+            {
+              "filename": "index.md",
+              "content": ""
+            }
+          ],
+          "children": []
+        },
+        {
+          "path": "/testing/mocking",
+          "files": [
+            {
+              "filename": "index.md",
+              "content": "what"
+            }
+          ],
+          "children": []
+        }
+      ]
+    }
+  ]
+}
