@@ -20,27 +20,30 @@ interface SidebarProps {
 }
 
 export function Sidebar({ onSelect }: SidebarProps) {
-  const renderNode = (node: DocNode) => {
-    const indexFile = node.files.find((f) => f.filename === "index.md")
-    const nonIndexFiles = node.files.filter((f) => f.filename !== "index.md")
-    const hasChildren = node.children.length > 0 || nonIndexFiles.length > 0
+const renderNode = (node: DocNode, isRoot = false) => {
+  const indexFile = node.files.find((f) => f.filename === "index.md")
+  const nonIndexFiles = node.files.filter((f) => f.filename !== "index.md")
+  const hasChildren = node.children.length > 0 || nonIndexFiles.length > 0
 
-    const folderLabel = node.path === "/" ? "Home" : node.path.split("/").pop()
-    const folderPath = node.path // clicking folder should go to index.md
+  const folderLabel = node.path === "/" ? "Home" : node.path.split("/").pop()
+  const folderPath = node.path
 
-    // Folder with no children or non-index files → direct link
-    if (!hasChildren) {
-      return (
-        <SidebarMenuItem key={node.path}>
-          <SidebarMenuButton onClick={() => onSelect(folderPath)}>
-            {folderLabel}
-          </SidebarMenuButton>
-        </SidebarMenuItem>
-      )
-    }
+  // Root folder: render only the index page directly
+  if (isRoot) {
+    return (
+      <SidebarMenuItem key={node.path}>
+        <SidebarMenuButton onClick={() => onSelect(folderPath)}>
+          {folderLabel}
+        </SidebarMenuButton>
+        {/* Render children as collapsibles */}
+        {node.children.map((child) => renderNode(child))}
+      </SidebarMenuItem>
+    )
+  }
 
+  // Normal folder with children → collapsible
+  if (hasChildren) {
     const [open, setOpen] = useState(true)
-
     return (
       <Collapsible
         key={node.path}
@@ -49,7 +52,6 @@ export function Sidebar({ onSelect }: SidebarProps) {
         className="group/collapsible"
       >
         <SidebarMenuItem>
-          {/* Folder button links to index.md if exists */}
           <CollapsibleTrigger asChild>
             <SidebarMenuButton
               onClick={() => onSelect(folderPath)}
@@ -66,7 +68,6 @@ export function Sidebar({ onSelect }: SidebarProps) {
 
           <CollapsibleContent>
             <SidebarMenuSub>
-              {/* Non-index files */}
               {nonIndexFiles.map((file) => {
                 const slug = file.filename.replace(".md", "")
                 const filePath =
@@ -81,7 +82,6 @@ export function Sidebar({ onSelect }: SidebarProps) {
                 )
               })}
 
-              {/* Children folders */}
               {node.children.map((child) => renderNode(child))}
             </SidebarMenuSub>
           </CollapsibleContent>
@@ -90,5 +90,16 @@ export function Sidebar({ onSelect }: SidebarProps) {
     )
   }
 
-  return <SidebarMenu>{renderNode(docsTree)}</SidebarMenu>
+  // Folder with only index.md → direct link
+  return (
+    <SidebarMenuItem key={node.path}>
+      <SidebarMenuButton onClick={() => onSelect(folderPath)}>
+        {folderLabel}
+      </SidebarMenuButton>
+    </SidebarMenuItem>
+  )
+}
+
+// Render root
+return <SidebarMenu>{renderNode(docsTree, true)}</SidebarMenu>
 }

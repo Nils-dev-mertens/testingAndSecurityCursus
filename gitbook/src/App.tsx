@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react"
+import { useState, useEffect } from "react"
+import "./App.css"
 import { DocsPage } from "./components/DocsPage"
 import { Sidebar } from "./components/Sidebar"
 import { SidebarProvider } from "./components/ui/sidebar"
@@ -54,7 +55,7 @@ export default function App() {
       </div>
 
       {/* Docs Content */}
-      <div className="flex-1 overflow-y-auto p-3">
+      <div className="flex-1 overflow-y-auto p-3 converted">
         <DocsPage path={currentPath} />
       </div>
     </div>

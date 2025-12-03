@@ -61,7 +61,7 @@ export function DocsPage({ path }: DocsPageProps) {
   if (node.files.length > 0) {
     const firstFile = node.files[0]
     return (
-      <div style={{ padding: 20 }}>
+      <div>
         <h1>{firstFile.filename.replace(/\.md$/, "")}</h1>
         <MarkdownContent content={firstFile.content} />
       </div>
