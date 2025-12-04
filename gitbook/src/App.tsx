@@ -55,9 +55,11 @@ export default function App() {
       </div>
 
       {/* Docs Content */}
-      <div className="flex-1 overflow-y-auto p-3 converted">
-        <DocsPage path={currentPath} />
-      </div>
+<div className="flex-1 overflow-y-auto p-3 converted flex justify-center">
+  <div className="w-[70%] mx-auto">
+    <DocsPage path={currentPath} />
+  </div>
+</div>
     </div>
   )
 }

@@ -1,15 +1,60 @@
 import * as fs from "fs"
 import * as path from "path"
 
-export interface FileNode {
+interface FileNode {
   filename: string
   content: string
 }
 
-export interface DocNode {
-  path: string        // "/", "/guide", "/guide/deep"
-  files: FileNode[]   // only md files in this folder
-  children: DocNode[] // only subfolders
+interface DocNode {
+  path: string
+  files: FileNode[]
+  children: DocNode[]
+}
+
+const CONTENT_ROOT = path.join(process.cwd(), "content")
+const PUBLIC_DOCS = path.join(process.cwd(), "public", "docs")
+
+// Ensure /public/docs exists
+if (!fs.existsSync(PUBLIC_DOCS)) {
+  fs.mkdirSync(PUBLIC_DOCS, { recursive: true })
+}
+
+// Extract images: ![alt](path)
+const IMAGE_REGEX = /!\[[^\]]*\]\(([^)]+)\)/g
+
+function copyImage(srcMdDir: string, imgPath: string): string {
+  // If already absolute (/docs/image.png) → do nothing
+  if (imgPath.startsWith("/")) return imgPath
+
+  const absoluteImgPath = path.resolve(srcMdDir, imgPath)
+  if (!fs.existsSync(absoluteImgPath)) {
+    console.warn("⚠ Missing image:", absoluteImgPath)
+    return imgPath
+  }
+
+  // Mirror directory structure inside /public/docs
+  const relativeSubpath = path.relative(CONTENT_ROOT, absoluteImgPath)
+  const targetPath = path.join(PUBLIC_DOCS, relativeSubpath)
+
+  // Ensure the folder exists
+  fs.mkdirSync(path.dirname(targetPath), { recursive: true })
+
+  // Copy only if changed or missing
+  if (!fs.existsSync(targetPath)) {
+    fs.copyFileSync(absoluteImgPath, targetPath)
+    console.log("Copied:", relativeSubpath)
+  }
+
+  // Public URL
+  return `/docs/${relativeSubpath.replace(/\\/g, "/")}`
+}
+
+function rewriteImages(mdContent: string, mdDir: string) {
+  return mdContent.replace(IMAGE_REGEX, (match, imgPath) => {
+    const newUrl = copyImage(mdDir, imgPath)
+    return match.replace(imgPath, newUrl)
+  })
 }
 
 function buildNode(dir: string, baseUrl: string): DocNode {
@@ -22,18 +67,21 @@ function buildNode(dir: string, baseUrl: string): DocNode {
     const fullPath = path.join(dir, item)
     const stat = fs.statSync(fullPath)
 
-    // Handle subdirectories
+    // Subdirectories
     if (stat.isDirectory()) {
       const childUrl = baseUrl === "/" ? `/${item}` : `${baseUrl}/${item}`
       children.push(buildNode(fullPath, childUrl))
+      continue
     }
 
-    // Handle markdown files
+    // Markdown files
     if (stat.isFile() && item.endsWith(".md")) {
-      const content = fs.readFileSync(fullPath, "utf8")
+      const raw = fs.readFileSync(fullPath, "utf8")
+      const updated = rewriteImages(raw, dir)
+
       files.push({
         filename: item,
-        content
+        content: updated
       })
     }
   }
@@ -45,12 +93,14 @@ function buildNode(dir: string, baseUrl: string): DocNode {
   }
 }
 
-const ROOT = path.join(process.cwd(), "content")
-const tree = buildNode(ROOT, "/")
+//
+// MAIN BUILD STEP
+//
+const tree = buildNode(CONTENT_ROOT, "/")
 
 fs.writeFileSync(
   path.join(process.cwd(), "tree.json"),
   JSON.stringify(tree, null, 2)
 )
 
-console.log("Generated tree.json")
+console.log("Generated tree.json with image handling.")
