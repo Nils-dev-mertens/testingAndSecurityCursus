@@ -4,11 +4,12 @@ This website is made out of pure frustration to share and publish well-documente
 
 ## what?
 this is a basic gitbook clone to make an attempt to upgrade the existent cursus.
-the stack uses as main languege `typescript`
-front-end: `React ts`
-back-end: `NONE`
-runtime: `node js`
-pipeline: `github actions`
+the stack uses:
+- main languege `typescript`
+- front-end: `React ts`, `tailwind`, `shadcn`
+- back-end: `NONE`
+- runtime: `node js`
+- pipeline: `github actions`
 
 ## where?
 no url created yet.
