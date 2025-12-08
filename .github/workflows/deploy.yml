@@ -21,26 +21,15 @@ jobs:
           version: latest
 
       # Deploy to server
-      - name: Deploy App
+      - name: Install sshpass
+        run: sudo apt-get update && sudo apt-get install -y sshpass
+
+      - name: Deploy
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.TS_HOST }} << 'EOF'
-          
-          # Go to your app directory
-          cd /path/to/app
-
-          # Pull latest changes
+          sshpass -p "${{ secrets.SERVER_PASSWORD }}" ssh -o StrictHostKeyChecking=no user@${{ secrets.TS_HOST }} "
+          cd /cybertestgitbook
           git pull
+          docker build -t cybertestgitbook .
+          docker run -d --name cybertestgitbook -p 3000:3000 cybertestgitbook:latest
+          "
 
-          docker build -t testcybgitbook:latest .
-
-          # Stop old container if running
-          docker stop testcybgitbook || true
-          docker rm testcybgitbook || true
-
-          # Start new container
-          docker run -d \
-            --name testcybgitbook \
-            -p 3000:3000 \
-            testcybgitbook:latest
-
-          EOF
