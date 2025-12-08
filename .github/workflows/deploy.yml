@@ -1,0 +1,37 @@
+name: Deploy
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Connect runner to Tailscale
+      - name: Tailscale
+        uses: tailscale/github-action@v4
+        with:
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:ci
+          version: latest
+
+      # Deploy to server
+      - name: Install sshpass
+        run: sudo apt-get update && sudo apt-get install -y sshpass
+
+      - name: Deploy
+        run: |
+          sshpass -p "${{ secrets.SERVER_PASSWORD }}" ssh -o StrictHostKeyChecking=no user@${{ secrets.TS_HOST }} "
+          cd /home/nils/cybertestgitbook/testingAndSecurityCursus/
+          git pull
+          docker build -t cybertestgitbook .
+          docker stop cybertestgitbook || true
+          docker rm cybertestgitbook || true
+          docker run -d --name cybertestgitbook -p 3000:3000 cybertestgitbook:latest
+          "
+
