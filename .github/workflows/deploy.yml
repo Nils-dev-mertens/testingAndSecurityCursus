@@ -27,9 +27,11 @@ jobs:
       - name: Deploy
         run: |
           sshpass -p "${{ secrets.SERVER_PASSWORD }}" ssh -o StrictHostKeyChecking=no user@${{ secrets.TS_HOST }} "
-          cd /cybertestgitbook
+          cd /home/nils/cybertestgitbook/testingAndSecurityCursus/
           git pull
           docker build -t cybertestgitbook .
+          docker stop cybertestgitbook || true
+          docker rm cybertestgitbook || true
           docker run -d --name cybertestgitbook -p 3000:3000 cybertestgitbook:latest
           "
 
