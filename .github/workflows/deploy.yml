@@ -32,6 +32,6 @@ jobs:
           docker build -t cybertestgitbook .
           docker stop cybertestgitbook || true
           docker rm cybertestgitbook || true
-          docker run -d --name cybertestgitbook -p 3000:3000 cybertestgitbook:latest
+          docker run -d --name cybertestgitbook -p 5100:5173 cybertestgitbook:latest
           "
 
