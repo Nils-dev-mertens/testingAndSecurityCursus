@@ -1,4 +1,5 @@
-FROM node:20-bookworm
+# Use Node image for build stage
+FROM node:20-bookworm AS builder
 
 WORKDIR /app
 
@@ -8,11 +9,22 @@ COPY gitbook/ .
 # Install dependencies
 RUN npm install
 
-# Run Vite prebuild step (your custom script)
-RUN npm run prebuild
+# Build the production-ready app
+RUN npm run build
 
-# Vite dev server default port
-EXPOSE 5173
+# ---------------------------
+# Use a lightweight web server to serve the build
+# ---------------------------
+FROM nginx:alpine
 
-# Start Vite dev server (must bind to 0.0.0.0 for Docker)
-CMD ["npm", "run", "dev", "--", "--host"]
+# Copy built files from the previous stage
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+# Optional: Copy custom Nginx config if needed
+# COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Expose HTTP port
+EXPOSE 80
+
+# Start Nginx
+CMD ["nginx", "-g", "daemon off;"]

@@ -21,7 +21,6 @@ interface SidebarProps {
 
 export function Sidebar({ onSelect }: SidebarProps) {
 const renderNode = (node: DocNode, isRoot = false) => {
-  const indexFile = node.files.find((f) => f.filename === "index.md")
   const nonIndexFiles = node.files.filter((f) => f.filename !== "index.md")
   const hasChildren = node.children.length > 0 || nonIndexFiles.length > 0
 

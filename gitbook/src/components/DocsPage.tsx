@@ -1,4 +1,3 @@
-import React from "react"
 import ReactMarkdown from "react-markdown"
 import { docsTree } from "../data/docstree"
 import type { DocNode } from "../types"
