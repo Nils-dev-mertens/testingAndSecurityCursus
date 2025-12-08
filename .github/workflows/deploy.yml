@@ -1,0 +1,46 @@
+name: Deploy
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Connect runner to Tailscale
+      - name: Tailscale
+        uses: tailscale/github-action@v4
+        with:
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:ci
+          version: latest
+
+      # Deploy to server
+      - name: Deploy App
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.TS_HOST }} << 'EOF'
+          
+          # Go to your app directory
+          cd /path/to/app
+
+          # Pull latest changes
+          git pull
+
+          docker build -t testcybgitbook:latest .
+
+          # Stop old container if running
+          docker stop testcybgitbook || true
+          docker rm testcybgitbook || true
+
+          # Start new container
+          docker run -d \
+            --name testcybgitbook \
+            -p 3000:3000 \
+            testcybgitbook:latest
+
+          EOF
