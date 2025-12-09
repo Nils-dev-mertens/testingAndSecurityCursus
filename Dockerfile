@@ -9,6 +9,7 @@ COPY gitbook/ .
 # Install dependencies
 RUN npm install
 
+RUN npm run prebuild
 # Build the production-ready app
 RUN npm run build
 
