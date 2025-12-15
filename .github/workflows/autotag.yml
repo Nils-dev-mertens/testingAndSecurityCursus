@@ -12,66 +12,68 @@ jobs:
   create-release:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
-      - name: Get the commit message
-        id: commit
-        run: echo "COMMIT_MSG=$(git log -1 --pretty=%B)" >> $GITHUB_ENV
+    - name: Get the commit message
+      id: commit
+      run: |
+        echo "COMMIT_MSG<<EOF" >> $GITHUB_ENV
+        git log -1 --pretty=%B | tr -d '\r' >> $GITHUB_ENV
+        echo "EOF" >> $GITHUB_ENV
 
-      - name: Determine release type
-        id: release-type
-        run: |
-          TYPE="patch"  # default
-          if [[ "$COMMIT_MSG" == *"[major]"* ]]; then
-            TYPE="major"
-          elif [[ "$COMMIT_MSG" == *"[minor]"* ]]; then
-            TYPE="minor"
-          elif [[ "$COMMIT_MSG" == *"[patch]"* ]] || [[ "$COMMIT_MSG" == *"[release]"* ]]; then
-            TYPE="patch"
-          else
-            echo "No release keyword found, skipping release."
-            exit 0
-          fi
-          echo "RELEASE_TYPE=$TYPE" >> $GITHUB_ENV
-          echo "Detected release type: $TYPE"
+    - name: Determine release type
+      id: release-type
+      run: |
+        TYPE="patch" # default
+        if [[ "$COMMIT_MSG" == *"[major]"* ]]; then
+          TYPE="major"
+        elif [[ "$COMMIT_MSG" == *"[minor]"* ]]; then
+          TYPE="minor"
+        elif [[ "$COMMIT_MSG" == *"[patch]"* ]] || [[ "$COMMIT_MSG" == *"[release]"* ]]; then
+          TYPE="patch"
+        else
+          echo "No release keyword found, skipping release."
+          exit 0
+        fi
 
-      - name: Get latest tag
-        id: version
-        run: |
-          # Get latest tag or default to v0.0.0
-          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
-          echo "Latest tag: $LATEST_TAG"
+        echo "RELEASE_TYPE=$TYPE" >> $GITHUB_ENV
+        echo "Detected release type: $TYPE"
 
-          VERSION_NUM=${LATEST_TAG#v}
-          MAJOR=${VERSION_NUM%%.*}
-          MINOR_PATCH=${VERSION_NUM#*.}
-          MINOR=${MINOR_PATCH%%.*}
-          PATCH=${MINOR_PATCH#*.}
+    - name: Get latest tag and compute next version
+      id: version
+      run: |
+        LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+        echo "Latest tag: $LATEST_TAG"
 
-          # Increment version based on release type
-          if [[ "${RELEASE_TYPE}" == "major" ]]; then
-            MAJOR=$((MAJOR+1))
-            MINOR=0
-            PATCH=0
-          elif [[ "${RELEASE_TYPE}" == "minor" ]]; then
-            MINOR=$((MINOR+1))
-            PATCH=0
-          else
-            PATCH=$((PATCH+1))
-          fi
+        VERSION_NUM=${LATEST_TAG#v}
+        MAJOR=${VERSION_NUM%%.*}
+        MINOR_PATCH=${VERSION_NUM#*.}
+        MINOR=${MINOR_PATCH%%.*}
+        PATCH=${MINOR_PATCH#*.}
 
-          NEXT_VERSION="v${MAJOR}.${MINOR}.${PATCH}"
-          echo "NEXT_VERSION=$NEXT_VERSION" >> $GITHUB_ENV
-          echo "Next version: $NEXT_VERSION"
+        if [[ "$RELEASE_TYPE" == "major" ]]; then
+          MAJOR=$((MAJOR+1))
+          MINOR=0
+          PATCH=0
+        elif [[ "$RELEASE_TYPE" == "minor" ]]; then
+          MINOR=$((MINOR+1))
+          PATCH=0
+        else
+          PATCH=$((PATCH+1))
+        fi
 
-      - name: Create GitHub Release
-        uses: actions/create-release@v1
-        with:
-          tag_name: ${{ env.NEXT_VERSION }}
-          release_name: Release ${{ env.NEXT_VERSION }}
-          body: Automated release triggered by commit message
-          draft: false
-          prerelease: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        NEXT_VERSION="v${MAJOR}.${MINOR}.${PATCH}"
+        echo "NEXT_VERSION=$NEXT_VERSION" >> $GITHUB_ENV
+        echo "Next version: $NEXT_VERSION"
+
+    - name: Create GitHub Release
+      uses: actions/create-release@v1
+      with:
+        tag_name: ${{ env.NEXT_VERSION }}
+        release_name: Release ${{ env.NEXT_VERSION }}
+        body: Automated release triggered by commit message
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
