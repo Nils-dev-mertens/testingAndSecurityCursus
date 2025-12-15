@@ -2,7 +2,9 @@ import { useState, useEffect } from "react"
 import "./App.css"
 import { DocsPage } from "./components/DocsPage"
 import { Sidebar } from "./components/Sidebar"
+import { TestTube2 } from "lucide-react"
 import { SidebarProvider } from "./components/ui/sidebar"
+import { Input } from "./components/ui/input"
 
 export default function App() {
   const [currentPath, setCurrentPath] = useState("/")
@@ -39,27 +41,50 @@ export default function App() {
   }
 
   return (
-    <div className="flex h-screen bg-background text-foreground">
-      {/* Sidebar */}
-      <div className="
-        w-64 
-        border-r 
-        border-border 
-        bg-card 
-        shadow-sm 
-        flex-shrink-0
-      ">
-        <SidebarProvider className="p-4">
-          <Sidebar onSelect={handleSelect} />
-        </SidebarProvider>
-      </div>
+    <div className="h-screen flex flex-col bg-background text-foreground overflow-hidden">
+      {/* navbar */}
+      <nav className="w-full border-b border-border bg-background flex-shrink-0">
+        <div className="flex h-14 items-center justify-between px-6">
+          {/* Left: Title */}
+          <div className="flex items-center gap-2">
+            <TestTube2 className="h-5 w-5 text-muted-foreground" />
+            <h2 className="text-sm font-semibold">
+              Testing and Security
+            </h2>
+          </div>
 
-      {/* Docs Content */}
-<div className="flex-1 overflow-y-auto p-3 converted flex justify-center">
-  <div className="w-[70%] mx-auto">
-    <DocsPage path={currentPath} />
-  </div>
-</div>
+          {/* Right: Search */}
+          <div className="w-64">
+            <Input
+              placeholder="Search documentation..."
+              className="h-9"
+            />
+          </div>
+        </div>
+      </nav>
+
+      <div className="flex flex-1 bg-background text-foreground overflow-hidden">
+        {/* Sidebar */}
+        <div className="
+          w-64 
+          border-r 
+          border-border 
+          bg-card 
+          shadow-sm 
+          shrink-0
+        ">
+          <SidebarProvider className="p-4">
+            <Sidebar onSelect={handleSelect} />
+          </SidebarProvider>
+        </div>
+
+        {/* Docs Content */}
+<div className="flex-1 overflow-y-auto overflow-x-hidden">
+          <div className="max-w-4xl mx-auto p-6 converted">
+            <DocsPage path={currentPath} />
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
