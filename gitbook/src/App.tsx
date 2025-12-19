@@ -1,13 +1,24 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import "./App.css"
 import { DocsPage } from "./components/DocsPage"
 import { Sidebar } from "./components/Sidebar"
-import { TestTube2 } from "lucide-react"
+import { TestTube2, SearchIcon } from "lucide-react"
 import { SidebarProvider } from "./components/ui/sidebar"
 import { Input } from "./components/ui/input"
+import { docsTree } from "./data/docstree"
+import SearchResult from "./components/SearchResult"
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogHeader, 
+  DialogTitle, 
+} from "./components/ui/dialog"
 
 export default function App() {
   const [currentPath, setCurrentPath] = useState("/")
+  const [filter, setFilter] = useState<string>("")
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const inputRef = useRef<HTMLInputElement>(null)
 
   const normalizePath = (raw: string | null | undefined) => {
     if (!raw) return "/"
@@ -40,10 +51,22 @@ export default function App() {
     window.location.hash = encodeURI(normalized)
   }
 
+  const handleInputFocus = () => {
+    setIsDialogOpen(true)
+  }
+
+  const handleDialogOpenChange = (open: boolean) => {
+    setIsDialogOpen(open)
+    // Reset filter when dialog closes
+    if (!open) {
+      setFilter("")
+    }
+  }
+
   return (
     <div className="h-screen flex flex-col bg-background text-foreground overflow-hidden">
       {/* navbar */}
-      <nav className="w-full border-b border-border bg-background flex-shrink-0">
+      <nav className="w-full border-b border-border bg-background shrink-0">
         <div className="flex h-14 items-center justify-between px-6">
           {/* Left: Title */}
           <div className="flex items-center gap-2">
@@ -53,15 +76,44 @@ export default function App() {
             </h2>
           </div>
 
-          {/* Right: Search */}
-          <div className="w-64">
+          {/* Right: Search Input */}
+          <div className="w-64 relative">
             <Input
+              ref={inputRef}
               placeholder="Search documentation..."
-              className="h-9"
+              className="h-9 cursor-pointer"
+              value={filter}
+              readOnly
+              onFocus={handleInputFocus}
+              // Preserve the icon and styling of the original input
+              icon={<SearchIcon className="h-4 w-4 text-muted-foreground" />}
             />
           </div>
         </div>
       </nav>
+
+      <Dialog open={isDialogOpen} onOpenChange={handleDialogOpenChange}>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>Search Documentation</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <Input
+              placeholder="Search documentation..."
+              className="h-9"
+              autoFocus
+              value={filter}
+              onChange={(e) => { setFilter(e.target.value) }}
+              icon={<SearchIcon className="h-4 w-4 text-muted-foreground" />}
+            />
+            {filter && (
+              <div className="max-h-[300px] overflow-y-auto">
+                <SearchResult query={filter} data={docsTree} setter={setCurrentPath}/>
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <div className="flex flex-1 bg-background text-foreground overflow-hidden">
         {/* Sidebar */}
@@ -79,7 +131,7 @@ export default function App() {
         </div>
 
         {/* Docs Content */}
-<div className="flex-1 overflow-y-auto overflow-x-hidden">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden">
           <div className="max-w-4xl mx-auto p-6 converted">
             <DocsPage path={currentPath} />
           </div>

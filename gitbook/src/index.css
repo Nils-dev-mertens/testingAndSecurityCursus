@@ -118,3 +118,55 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* ===== SHADCN / RADIX TRANSPARENT SCROLL AREA ===== */
+
+/* Root */
+[data-slot="scroll-area"] {
+  position: relative;
+  overflow: hidden; /* IMPORTANT: hides native scrollbars */
+}
+
+/* Scrollbar Track */
+[data-slot="scroll-area-scrollbar"] {
+  display: flex;
+  user-select: none;
+  touch-action: none;
+  padding: 2px;
+  transition: background 0.2s ease;
+  background: transparent; /* fully transparent track */
+}
+
+/* Vertical bar width */
+[data-slot="scroll-area-scrollbar"][data-orientation="vertical"] {
+  width: 10px;
+}
+
+/* Horizontal bar height */
+[data-slot="scroll-area-scrollbar"][data-orientation="horizontal"] {
+  height: 10px;
+  flex-direction: column;
+}
+
+/* Thumb */
+[data-slot="scroll-area-thumb"] {
+  flex: 1;
+  border-radius: 9999px;
+  position: relative;
+  background: rgba(255, 255, 255, 0.15); /* subtle thumb */
+  transition: background 0.2s ease, opacity 0.2s ease;
+}
+
+/* Hover thumb */
+[data-slot="scroll-area-thumb"]:hover {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+/* Dark mode */
+.dark [data-slot="scroll-area-thumb"] {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.dark [data-slot="scroll-area-thumb"]:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
