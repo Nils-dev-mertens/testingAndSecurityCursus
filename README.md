@@ -19,6 +19,7 @@ A comprehensive, GitBook-inspired platform designed to enhance existing educatio
   - Markdown to HTML React
 
 #### Infrastructure
+- **Container**: Docker
 - **Backend**: None (Static Site)
 - **Runtime**: Node.js
 - **CI/CD**: 
@@ -29,8 +30,8 @@ A comprehensive, GitBook-inspired platform designed to enhance existing educatio
 
 We've implemented automated workflows for three key processes:
 1. Server Deployment
-2. Docker Image Publishing
-3. Release Management
+2. Docker Image Publishing when creating realise
+3. Release Management via auto tagging
 
 ### Versioning Convention
 
@@ -48,7 +49,3 @@ Visit our live site: [Testing and Security Resources](https://testingandsecurity
 ## Contribution
 
 Contributions, issues, and feature requests are welcome! Feel free to check [issues page](https://github.com/Nils-dev-mertens/testingAndSecurityCursus/issues).
-
-## License
-
-[Insert License Information Here]

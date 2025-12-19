@@ -53,7 +53,7 @@ export const ResultItem = ({ path, title, content, setter }: ResultItemInterface
         <DialogClose asChild>
             <Card onClick={() => { handleSelect(path, setter); }} className="mb-2">
                 <CardHeader>
-                    <CardTitle>{title == "index.md" ? path ==  "/" ? "Home" : path.split("/")[path.split("/").length -1] : title}</CardTitle>
+                    <CardTitle>{title == "index.md" ? path ==  "/" ? "Home" : path.split("/")[path.split("/").length -1] : title.split(".")[0]}</CardTitle>
                     <CardDescription className="line-clamp-1">{content.replace(/^#+\s*/, "")}</CardDescription>
                 </CardHeader>
             </Card>
