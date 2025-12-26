@@ -20,6 +20,18 @@ export default function App() {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
 
+    useEffect(() => {
+    const handleKeyDown = (e : KeyboardEvent) => {
+      if (e.ctrlKey && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setIsDialogOpen(true);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   const normalizePath = (raw: string | null | undefined) => {
     if (!raw) return "/"
     try {
@@ -108,7 +120,7 @@ export default function App() {
             />
             {filter && (
               <div className="max-h-[300px] overflow-y-auto">
-                <SearchResult query={filter} data={docsTree} setter={setCurrentPath}/>
+                <SearchResult query={filter} data={docsTree} setter={setCurrentPath} />
               </div>
             )}
           </div>

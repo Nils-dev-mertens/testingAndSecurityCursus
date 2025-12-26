@@ -3,12 +3,12 @@
   "files": [
     {
       "filename": "index.md",
-      "content": "## Welkom\n\ndit is een cursus gemaakt door studenten voor studenten"
+      "content": "## Achtergrond\n\nDit is een cursus ontwikkeld door studenten voor studenten, geboren uit frustratie en de wens om te verbeteren. Frustratie is een krachtige emotie die ons drijft: we kunnen ofwel actie ondernemen ofwel wegvluchten. In dit geval heb ik gekozen voor actie.\n\n## Curriculumverandering\n\nIn studiejaar 2025-2026 heeft AP Hogeschool besloten twee afzonderlijke vakken Testing en Cybersecurity samen te voegen tot één geïntegreerd vak. Waar voorheen deze vakken elk 3 studiepunten besloegen, is nu één gezamenlijk vak gecreëerd met 3 studiepunten.\n\n## Uitdagingen in het Onderwijs\n\nDe onderwijsteam heeft te kampen gehad met significante uitdagingen:\n\n- Beperkte voorbereidingstijd voor curriculumontwikkeling\n- Verouderde cursusmaterialen\n- Verwijzingen naar niet meer bestaande tools en extensies\n- Oppervlakkige behandeling van diepgaande onderwerpen\n\n## Onze Filosofie\n\nHet graduaatsprogramma draait om praktijk: \"leren door doen\" in plaats van alleen maar luisteren. Onze aanpak is gericht op:\n\n- Praktische vaardigheden\n- Diepgaand begrip\n- Hands-on ervaring\n\n## Doel van deze Cursus\n\nDeze GitBook is ontwikkeld om:\n- Ontbrekende praktische uitleg aan te vullen\n- Diepere inzichten te bieden\n- Studenten een bruikbare, actuele bron van kennis te geven\n\nSamen bouwen we aan een betere, meer praktijkgerichte leermethode voor Testing en Cybersecurity."
     }
   ],
   "children": [
     {
-      "path": "/security",
+      "path": "/Security",
       "files": [
         {
           "filename": "index.md",
@@ -18,7 +18,7 @@
       "children": []
     },
     {
-      "path": "/testing",
+      "path": "/Testing",
       "files": [
         {
           "filename": "index.md",
@@ -27,8 +27,12 @@
       ],
       "children": [
         {
-          "path": "/testing/mocking",
+          "path": "/Testing/Mocking",
           "files": [
+            {
+              "filename": "Mockcoon.md",
+              "content": "## Algemene uitleg"
+            },
             {
               "filename": "Moq.md",
               "content": "## Moq data row met datarowmethod\nals we meerdere soorten data willen testen zonder voor elk een aparte test te schrijven kunnen we het zo doen.\n\n```csharp\n[DataTestMethod]\n[DataRow(\"a\", \"b\")]\n[DataRow(\" \", \"a\")]\npublic void TestMethod1(string value1, string value2)\n{\n    Assert.AreEqual(value1 + value2, string.Concat(value1, value2));\n}\n```\n\n\n## Moq een exception laten veroorzaken in een dependency\n\nVoeg aan `WeatherServiceTests` de volgende test case toe:\n\n```csharp\n[TestMethod()]\npublic void GetCurrentWeatherInAntwerp_When_Getting_Temperature_Fails()\n{\n     // Arrange\n     var openWeatherMap = new Mock<IOpenWeatherMapApi>();\n     openWeatherMap.Setup(x => x.GetCurrentTemperatureInAntwerp()).Throws<Exception>(); // (1)\n\n     // Act\n     var weatherService = new WeatherService(openWeatherMap.Object);\n\n     // Assert\n     Assert.ThrowsException<Exception>(() => weatherService.GetCurrentWeatherInAntwerp()); // (2)\n}\n\n```\n\nIn `(1)` vertellen we aan `Moq` dat als de `GetCurrentTemperatureInAntwerp` methode van de api aangeroepen wordt, we willen dat er een exception gegooid wordt van het type `Exception`. Omdat in de weather service er geen afhandeling hiervan gebeurt, verwachten we dat de exception hier door passeert. Dit zien we in `(2)` waar er getest wordt dat als de `GetCurrentWeatherInAntwerp` aangeroepen wordt, die methode ook een exception gooit.\n\n## Error handling toevoegen in de weather service\n\nStel de requirements voor de `GetCurrentWeatherInAntwerp` method worden gewijzigd zodat er een speciale boodschap teruggegeven wordt als de gebruikte weather api faalt. Dit wordt geïmplementeerd in het onderstaande stukje code:\n\n```csharp\npublic string GetCurrentWeatherInAntwerp()\n{\n    float temp;\n    try\n    {\n        temp = weatherApi.GetCurrentTemperatureInAntwerp();\n    }\n    catch (Exception)\n    {\n        return \"Failed to get temperature\";\n    }\n    if (temp < 0)\n    {\n        return \"Brrrr, it's freezing\";\n    }\n    if (temp < 15)\n    {\n        return \"It's cold\";\n    }\n    if (temp < 24)\n    {\n        return \"it's ok\";\n    }\n    return \"It's HOT!!!\";\n}\n```\n\nWe passen ook de test case aan:\n\n```csharp\n[TestMethod()]\npublic void GetCurrentWeatherInAntwerp_When_Getting_Temperature_Fails_Returns_Failed()\n{\n    // Arrange\n    var weatherApi = new Mock<IOpenWeatherMapApi>();\n    weatherApi.Setup(x => x.GetCurrentTemperatureInAntwerp()).Throws<Exception>();\n\n    // Act\n    var weatherService = new WeatherService(weatherApi.Object);\n    var result = weatherService.GetCurrentWeatherInAntwerp();\n\n    // Assert\n    Assert.AreEqual(\"Failed to get temperature\", result);\n}\n```\n"

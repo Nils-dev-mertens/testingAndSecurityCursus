@@ -19,11 +19,11 @@ export default function SearchResult({ query, data, setter }: SearchResultInterf
     const matchesQuery = (text: string) =>
         text.toLowerCase().replace(/[#\n]/g, '').includes(normalizedQuery);
 
-    return (<ScrollArea className="overflow-y-auto">
+    return (<ScrollArea>
         {data.files.map((file, index) => (
             matchesQuery(file.filename) || matchesQuery(file.content) ?
                 <ResultItem
-                    path={data.path}
+                    path={file.filename == "index.md" ? data.path  : `${data.path}/${file.filename.split(".")[0]}`}
                     key={`${data.path}-file-${index}`}
                     title={file.filename}
                     content={file.content}
