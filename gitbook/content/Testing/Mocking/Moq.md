@@ -1,87 +1,102 @@
-## Moq data row met datarowmethod
-als we meerdere soorten data willen testen zonder voor elk een aparte test te schrijven kunnen we het zo doen.
+## Moq Datarij met DataRowMethod
+
+Wanneer we meerdere soorten data willen testen zonder voor elk een aparte test te schrijven, kunnen we de DataRow-methode gebruiken:
 
 ```csharp
 [DataTestMethod]
 [DataRow("a", "b")]
 [DataRow(" ", "a")]
-public void TestMethod1(string value1, string value2)
+public void TestMethodSamenvoegen(string waarde1, string waarde2)
 {
-    Assert.AreEqual(value1 + value2, string.Concat(value1, value2));
+    Assert.AreEqual(waarde1 + waarde2, string.Concat(waarde1, waarde2));
 }
 ```
 
+## Moq: Een Exception Veroorzaken in een Dependency
 
-## Moq een exception laten veroorzaken in een dependency
-
-Voeg aan `WeatherServiceTests` de volgende test case toe:
+We kunnen Moq gebruiken om te simuleren hoe onze service reageert wanneer een afhankelijkheid een fout veroorzaakt:
 
 ```csharp
-[TestMethod()]
-public void GetCurrentWeatherInAntwerp_When_Getting_Temperature_Fails()
+[TestMethod]
+public void HuidigWeer_Bij_TemperatuurOphalen_Mislukt()
 {
      // Arrange
      var openWeatherMap = new Mock<IOpenWeatherMapApi>();
-     openWeatherMap.Setup(x => x.GetCurrentTemperatureInAntwerp()).Throws<Exception>(); // (1)
+     openWeatherMap.Setup(x => x.HuidigeTemperatuurInAntwerpen()).Throws<Exception>();
 
      // Act
-     var weatherService = new WeatherService(openWeatherMap.Object);
+     var weerService = new WeerService(openWeatherMap.Object);
 
      // Assert
-     Assert.ThrowsException<Exception>(() => weatherService.GetCurrentWeatherInAntwerp()); // (2)
+     Assert.ThrowsException<Exception>(() => weerService.HuidigWeerInAntwerpen());
 }
-
 ```
 
-In `(1)` vertellen we aan `Moq` dat als de `GetCurrentTemperatureInAntwerp` methode van de api aangeroepen wordt, we willen dat er een exception gegooid wordt van het type `Exception`. Omdat in de weather service er geen afhandeling hiervan gebeurt, verwachten we dat de exception hier door passeert. Dit zien we in `(2)` waar er getest wordt dat als de `GetCurrentWeatherInAntwerp` aangeroepen wordt, die methode ook een exception gooit.
+## Foutafhandeling Toevoegen aan de Weer Service
 
-## Error handling toevoegen in de weather service
-
-Stel de requirements voor de `GetCurrentWeatherInAntwerp` method worden gewijzigd zodat er een speciale boodschap teruggegeven wordt als de gebruikte weather api faalt. Dit wordt geïmplementeerd in het onderstaande stukje code:
+Stel dat de vereisten voor de `HuidigWeerInAntwerpen`-methode worden gewijzigd om een speciale boodschap te retourneren als de weer-API mislukt:
 
 ```csharp
-public string GetCurrentWeatherInAntwerp()
+public string HuidigWeerInAntwerpen()
 {
-    float temp;
+    float temperatuur;
     try
     {
-        temp = weatherApi.GetCurrentTemperatureInAntwerp();
+        temperatuur = weerApi.HuidigeTemperatuurInAntwerpen();
     }
     catch (Exception)
     {
-        return "Failed to get temperature";
+        return "Temperatuur ophalen mislukt";
     }
-    if (temp < 0)
+
+    // Temperatuur classificatie
+    if (temperatuur < 0)
     {
-        return "Brrrr, it's freezing";
+        return "Brr, het vriest";
     }
-    if (temp < 15)
+    if (temperatuur < 15)
     {
-        return "It's cold";
+        return "Het is koud";
     }
-    if (temp < 24)
+    if (temperatuur < 24)
     {
-        return "it's ok";
+        return "Het is prima weer";
     }
-    return "It's HOT!!!";
+    return "Het is heet!!!";
 }
 ```
 
-We passen ook de test case aan:
+Bijbehorende testcase:
 
 ```csharp
-[TestMethod()]
-public void GetCurrentWeatherInAntwerp_When_Getting_Temperature_Fails_Returns_Failed()
+[TestMethod]
+public void HuidigWeer_Bij_TemperatuurOphalen_Mislukt_Geeft_Foutmelding()
 {
     // Arrange
-    var weatherApi = new Mock<IOpenWeatherMapApi>();
-    weatherApi.Setup(x => x.GetCurrentTemperatureInAntwerp()).Throws<Exception>();
+    var weerApi = new Mock<IOpenWeatherMapApi>();
+    weerApi.Setup(x => x.HuidigeTemperatuurInAntwerpen()).Throws<Exception>();
 
     // Act
-    var weatherService = new WeatherService(weatherApi.Object);
-    var result = weatherService.GetCurrentWeatherInAntwerp();
+    var weerService = new WeerService(weerApi.Object);
+    var resultaat = weerService.HuidigWeerInAntwerpen();
 
     // Assert
-    Assert.AreEqual("Failed to get temperature", result);
+    Assert.AreEqual("Temperatuur ophalen mislukt", resultaat);
 }
 ```
+
+## Belangrijkste Moq Concepten
+
+1. **Mocking**: Het creëren van een gefingeerd object dat een interface of klasse nabootst
+2. **Setup**: Het configureren van het gedrag van het mock-object
+3. **Verify**: Controleren of specifieke methoden zijn aangeroepen
+4. **Throws**: Simuleren van uitzonderingen
+5. **Returns**: Definiëren van terugkeerwaarden voor methoden
+
+## Best Practices
+
+- Gebruik mocking om afhankelijkheden te isoleren
+- Test verschillende scenario's
+- Houd mock-objecten simpel en gefocust
+- Vermijd te complexe mock-configuraties
+- Test zowel het gelukkige pad als foutscenario's

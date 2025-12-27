@@ -50,7 +50,7 @@ export function DocsPage({ path }: DocsPageProps) {
   if (indexFile) {
     return (
       <div style={{ padding: 20 }}>
-        <h1>{node.path === "/" ? "Home" : node.path}</h1>
+        <h1>{node.path === "/" ? "Home" : node.path.split("/")[node.path.split("/").length - 1]}</h1>
         <MarkdownContent content={indexFile.content} />
       </div>
     )

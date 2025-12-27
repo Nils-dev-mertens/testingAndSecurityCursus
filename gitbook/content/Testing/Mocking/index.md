@@ -1,89 +1,127 @@
 ## Algemene uitleg
 
-Mocking is een manier om iets na te bootsen zodat er aparte delen kunnen testen. je schrijf testen om verschillende delen te testen. bvb je hebt 2 andere class nodig voor een classen te testen is het de bedoeling om alleen die klassen te testen niet de extra classen dat je nodig hebt. bvb bij een auto zou zo kunnen zijn
+Mocking is een manier om iets na te bootsen zodat we afzonderlijke onderdelen kunnen testen. Je schrijft testen om verschillende componenten te isoleren. Bijvoorbeeld, als je twee andere klassen nodig hebt om een klasse te testen, is het de bedoeling om alleen die specifieke klasse te testen, niet de bijbehorende afhankelijkheden. 
+
+Een voorbeeld met een auto:
 
 ```csharp
 public interface IWheel
 {
-    public bool startEngine();
-
-    public void stopEngine();
+    bool StartEngine();
+    void StopEngine();
 }
 
-public class Car : Icar 
+public interface IEngine
 {
-    IEngine _engine;
-    IWheel _wheel;
+    void Start();
+    void Stop();
+}
 
-    public Car(IEngine engine)
-    {
-       _engine = engine; 
-    }
+public class Car 
+{
+    private IEngine _engine;
+    private IWheel _wheel;
 
-    //we Moeten interfaces gebruiken!!
+    // Constructor met afhankelijkheidsinjectie
     public Car(IEngine engine, IWheel wheel)
     {
         _engine = engine;
         _wheel = wheel;
     }
 
-    public Drive()
+    public void Drive()
     {
-        _engine.startEngine();
-        _wheel.turnWheel();
+        _engine.Start();
+        _wheel.StartEngine();
     }
-
-    //de rest van de code
 }
 ```
-de extra classen zijn hier de engine en het wheel. 
 
-## Mockclassen
-zien classen dat weinig code bevatten meestal gewoon direct een return met vaste waarde zodat de kans op bugs in die klassen al dratisch verkleint of onbestaan is.
-bvb:
+De extra klassen hier zijn de `Engine` en `Wheel`, die we willen mocken tijdens het testen van de `Car` klasse.
+
+## Mock Klassen
+
+Mock klassen bevatten doorgaans minimale code met vaste retourwaarden. Het doel is om de kans op bugs te verkleinen en de test te vereenvoudigen:
+
 ```csharp
 public class MockWheel : IWheel
 {
-    public bool Running = false;
+    public bool IsRunning { get; private set; } = false;
 
-    public void startEngine()
+    public bool StartEngine()
     {
-        _running = true;
+        IsRunning = true;
+        return true;
     }
 
-    public void stopEngine()
+    public void StopEngine()
     {
-        _running = false;
+        IsRunning = false;
     }
 }
 ```
-als je kan zien is er weinig tot geen coplexiteit aanwezig.
 
-we gebruiken dit als volgt:
+## Testvoorbeelden
+
+### Handmatige Mock
+
 ```csharp
 public class CarTest
 {
     [TestMethod]
-    public void startEngine()
+    public void TestCarDrive()
     {
-        IWheel _engine = new();
-        var car = Car(_engine);
+        // Handmatige mock
+        var mockWheel = new MockWheel();
+        var mockEngine = new Mock<IEngine>();
+        mockEngine.Setup(e => e.Start());
+
+        var car = new Car(mockEngine.Object, mockWheel);
         car.Drive();
+
+        Assert.IsTrue(mockWheel.IsRunning);
+        mockEngine.Verify(e => e.Start(), Times.Once);
     }
 }
 ```
-we kunnen ook de nuget package gebruiken genaamd moq.
-Dus kunnen we de vorige test als volgt schrijven.
+
+### Moq (Dependency Mocking Bibliotheek)
 
 ```csharp
 public class CarTest
 {
     [TestMethod]
-    public void startEngine()
+    public void TestCarDriveWithMoq()
     {
-        var engine = new Mock<IWheel>();
-        engine.Setup(x => x.startEngine()).Returns(true);
-        Assert.Equal(_engine.Running, true);
+        // Moq voor het mocken van afhankelijkheden
+        var mockWheel = new Mock<IWheel>();
+        var mockEngine = new Mock<IEngine>();
+        
+        // Configureer het gedrag van de mock
+        mockWheel.Setup(w => w.StartEngine()).Returns(true);
+        mockEngine.Setup(e => e.Start());
+
+        var car = new Car(mockEngine.Object, mockWheel.Object);
+        car.Drive();
+
+        // Verifieer interacties
+        mockWheel.Verify(w => w.StartEngine(), Times.Once);
+        mockEngine.Verify(e => e.Start(), Times.Once);
     }
 }
 ```
+
+## Voordelen van Mocking
+
+1. **Isolatie**: Test specifieke componenten zonder afhankelijkheden
+2. **Controle**: Simuleer verschillende scenario's
+3. **Snelheid**: Elimineer externe afhankelijkheden
+4. **Betrouwbaarheid**: Voorspelbare testomgevingen
+
+## Wanneer Gebruik Je Mocking?
+
+- Unit testing
+- Testen van complexe systemen
+- Simuleren van externe services
+- Voorbereiden van randgevallen
+- Testen van foutscenario's
