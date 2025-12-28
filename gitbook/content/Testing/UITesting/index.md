@@ -21,16 +21,48 @@ UI Testing richt zich op het controleren van visuele en interactieve elementen v
 
 #### Te Testen Elementen:
 
-| Element | Testdoel |
-|---------|----------|
-| Veldgroottes | Beperken van invoerlengte |
-| Navigatie-elementen | Werking van knoppen en links |
-| Voortgangsbalken | Gebruikersfeedback bij bewerkingen |
-| Type-ahead | Snel vinden van opties |
-| Tabelscrolling | Headers en navigatie |
-| Foutregistratie | Correct vastleggen van fouten |
-| Menu-items | Zichtbaarheid en functionaliteit |
-| Datavalidatie | Controleren van invoergeldigheid |
+<table>
+    <thead>
+        <tr>
+            <th>Element</th>
+            <th>Testdoel</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Veldgroottes</td>
+            <td>Beperken van invoerlengte</td>
+        </tr>
+        <tr>
+            <td>Navigatie-elementen</td>
+            <td>Werking van knoppen en links</td>
+        </tr>
+        <tr>
+            <td>Voortgangsbalken</td>
+            <td>Gebruikersfeedback bij bewerkingen</td>
+        </tr>
+        <tr>
+            <td>Type-ahead</td>
+            <td>Snel vinden van opties</td>
+        </tr>
+        <tr>
+            <td>Tabelscrolling</td>
+            <td>Headers en navigatie</td>
+        </tr>
+        <tr>
+            <td>Foutregistratie</td>
+            <td>Correct vastleggen van fouten</td>
+        </tr>
+        <tr>
+            <td>Menu-items</td>
+            <td>Zichtbaarheid en functionaliteit</td>
+        </tr>
+        <tr>
+            <td>Datavalidatie</td>
+            <td>Controleren van invoergeldigheid</td>
+        </tr>
+    </tbody>
+</table>
 
 ### 4. Manueel vs. Automatisch Testen
 

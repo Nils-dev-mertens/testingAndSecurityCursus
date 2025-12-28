@@ -32,13 +32,36 @@
 
 #### 2.2 Browser WebDrivers Downloaden
 
-| Browser | Download Link |
-|---------|--------------|
-| Firefox | https://github.com/mozilla/geckodriver/releases |
-| Chrome | http://chromedriver.chromium.org/downloads |
-| Internet Explorer | https://github.com/SeleniumHQ/selenium/wiki/InternetExplorerDriver |
-| Edge | https://blogs.windows.com/msedgedev/2015/07/23/bringing-automated-testing-to-microsoft-edge-through-webdriver/ |
-| Opera | https://github.com/operasoftware/operachromiumdriver/releases |
+<table>
+        <thead>
+            <tr>
+                <th>Browser</th>
+                <th>Download Link</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Firefox</td>
+                <td><a href="https://github.com/mozilla/geckodriver/releases">https://github.com/mozilla/geckodriver/releases</a></td>
+            </tr>
+            <tr>
+                <td>Chrome</td>
+                <td><a href="http://chromedriver.chromium.org/downloads">http://chromedriver.chromium.org/downloads</a></td>
+            </tr>
+            <tr>
+                <td>Internet Explorer</td>
+                <td><a href="https://github.com/SeleniumHQ/selenium/wiki/InternetExplorerDriver">https://github.com/SeleniumHQ/selenium/wiki/InternetExplorerDriver</a></td>
+            </tr>
+            <tr>
+                <td>Edge</td>
+                <td><a href="https://blogs.windows.com/msedgedev/2015/07/23/bringing-automated-testing-to-microsoft-edge-through-webdriver/">https://blogs.windows.com/msedgedev/2015/07/23/bringing-automated-testing-to-microsoft-edge-through-webdriver/</a></td>
+            </tr>
+            <tr>
+                <td>Opera</td>
+                <td><a href="https://github.com/operasoftware/operachromiumdriver/releases">https://github.com/operasoftware/operachromiumdriver/releases</a></td>
+            </tr>
+        </tbody>
+    </table>
 
 ##### WebDriver Plaatsing
 - Zelfde map als browser executable

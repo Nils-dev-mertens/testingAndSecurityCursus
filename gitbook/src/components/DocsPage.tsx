@@ -1,6 +1,9 @@
 import ReactMarkdown from "react-markdown"
+import "prismjs/themes/prism-tomorrow.css"
+import rehypeRaw from "rehype-raw" // Add this import
 import { docsTree } from "../data/docstree"
 import type { DocNode } from "../types"
+import rehypePrism from "rehype-prism-plus"
 import { findNodeByPath } from "../utils/findpath"
 
 interface DocsPageProps {
@@ -32,7 +35,11 @@ export function DocsPage({ path }: DocsPageProps) {
 
   // Helper component to render markdown
   const MarkdownContent = ({ content }: { content: string }) => (
-    <ReactMarkdown>{content}</ReactMarkdown>
+    <ReactMarkdown 
+      rehypePlugins={[rehypeRaw,rehypePrism]} // Add this line to render raw HTML
+    >
+      {content}
+    </ReactMarkdown>
   )
 
   // If a specific file is selected
