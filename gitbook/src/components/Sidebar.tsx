@@ -19,7 +19,7 @@ interface SidebarProps {
   onSelect: (path: string) => void
 }
 
-export function Sidebar({ onSelect }: SidebarProps) {
+export function SidebarContent({ onSelect }: SidebarProps) {
 const renderNode = (node: DocNode, isRoot = false) => {
   const nonIndexFiles = node.files.filter((f) => f.filename !== "index.md")
   const hasChildren = node.children.length > 0 || nonIndexFiles.length > 0
