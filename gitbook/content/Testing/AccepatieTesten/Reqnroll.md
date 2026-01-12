@@ -1,6 +1,4 @@
-# 3. Automatisch testen met Reqnroll
-
-## Inleiding tot Behavior-Driven Development (BDD) met Reqnroll
+## Behavior-Driven Development (BDD) met Reqnroll
 
 Behavior-Driven Development (BDD) is een agile softwareontwikkelingsmethode waarbij de nadruk ligt op het beschrijven van het gedrag van een systeem in een voor mensen begrijpelijke taal. Reqnroll is een open-source BDD framework voor .NET dat het mogelijk maakt om specificaties te schrijven en te automatiseren met behulp van Gherkin-syntaxis.
 

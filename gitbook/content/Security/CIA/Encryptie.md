@@ -33,6 +33,8 @@ public static string HashString(string wachtwoord)
    - Vereist een sleutel voor ontsleutelen
    - Geschikt voor gegevens die later terug leesbaar moeten zijn
 
+> installeer de package System.Security.Cryptography.Pkcs als dit niet beschikbaar is
+
 ```csharp
 public static byte[] Versleutel(string tekst, X509Certificate2 certificaat)
 {
