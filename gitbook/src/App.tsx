@@ -95,7 +95,7 @@ export default function App() {
                 <SidebarTrigger className="md:hidden" />
                 <TestTube2 className="h-5 w-5 text-muted-foreground" />
                 <h2 className="text-sm font-semibold">
-                  Testing and Security
+                  Student docs PRO
                 </h2>
               </div>
               {/* Right: Search Input */}
