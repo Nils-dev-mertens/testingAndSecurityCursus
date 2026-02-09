@@ -1,5 +1,3 @@
-# Docker basiscommando's
-
 ## Inleiding
 Docker biedt een uitgebreide CLI om containers en infrastructuur snel te beheren. Dit overzicht bundelt de meest gebruikte commando's, gegroepeerd per scenario. Zie het als een naslagwerk voor dagelijks gebruik en als inspiratie voor eigen scripts of automation.
 

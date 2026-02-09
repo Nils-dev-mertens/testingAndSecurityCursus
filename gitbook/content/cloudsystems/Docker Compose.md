@@ -1,5 +1,3 @@
-# Docker Compose: multi-container applicaties beheren
-
 ## Inleiding
 Met Docker Compose definieer je een volledige omgeving (services, netwerken en volumes) in één YAML-bestand. Ideaal voor projecten waar meerdere containers – bijvoorbeeld een webapp en een database – samenwerken. Deze pagina geeft context, een voorbeeldbestand en de belangrijkste commando's.
 

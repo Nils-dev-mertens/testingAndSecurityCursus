@@ -1,5 +1,3 @@
-# Dockerfile: van basis tot deployment
-
 ## Inleiding
 Een Dockerfile beschrijft stap voor stap hoe je een containerimage bouwt. Onderstaande gids is opgedeeld in drie delen:
 1. Snelle referentie van veelgebruikte bouw- en run-commando's

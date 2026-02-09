@@ -1,5 +1,3 @@
-# Cloudsystems
-
 ## Overzicht
 Cloudsystems focust op het bouwen en beheren van container- en netwerkgedreven omgevingen. Je leert hoe Docker, Docker Compose, Traefik en CI/CD elkaar versterken om applicaties betrouwbaar te deployen. Daarnaast behandelen we netwerkfundamenten zoals routing met Cisco Packet Tracer zodat je op elk niveau begrijpt hoe verkeer stroomt.
 

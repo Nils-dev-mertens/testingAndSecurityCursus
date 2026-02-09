@@ -1,6 +1,3 @@
-
-# Netwerken en routing: basisconcepten voor Docker en daarbuiten
-
 ## Inleiding
 Routing en IP-adressering vormen de ruggengraat van elke cloud- of containeromgeving. Deze uitleg sluit aan bij de Docker-lessen: zodra je meerdere containers of machines met elkaar wil laten praten, heb je inzicht nodig in IP-adressen, subnetten en hoe pakketten hun weg vinden.
 
