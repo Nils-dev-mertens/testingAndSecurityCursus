@@ -11,7 +11,7 @@ function Input({
   icon?: React.ReactNode 
 }) {
   return (
-    <div className="relative flex items-center">
+    <div className="relative flex w-full min-w-0 flex-1 items-center">
       {icon && (
         <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
           {icon}

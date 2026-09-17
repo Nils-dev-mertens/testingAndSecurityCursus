@@ -6,7 +6,8 @@ import tseslint from 'typescript-eslint'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig([
-  globalIgnores(['dist']),
+  // Astro-generated type files and build output are not part of this code base
+  globalIgnores(['dist', '.astro']),
   {
     files: ['**/*.{ts,tsx}'],
     extends: [
@@ -18,6 +19,15 @@ export default defineConfig([
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,
+    },
+  },
+  {
+    // shadcn/ui primitives export helper constants (variants, Skeleton width)
+    // alongside components; not subject to strict component-export rules
+    files: ['src/components/ui/**/*.{ts,tsx}'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
+      'react-hooks/purity': 'off',
     },
   },
 ])

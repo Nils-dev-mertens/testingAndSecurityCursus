@@ -1,62 +1,81 @@
-import type { DocNode } from "@/types";
-import { Card, CardDescription, CardHeader, CardTitle } from "./ui/card";
-import { ScrollArea } from "./ui/scroll-area";
-import handleSelect from "@/lib/handleselect";
-import type { Dispatch, SetStateAction } from "react";
+import type { DocNode } from "../types";
+import { searchDocs, type SearchHit } from "../lib/search";
 import { DialogClose } from "./ui/dialog";
+import { CornerDownLeft } from "lucide-react";
 
-interface SearchResultInterface {
-    query: string;
-    data: DocNode;
-    setter: Dispatch<SetStateAction<string>>;
+interface SearchResultProps {
+  query: string;
+  data: DocNode;
+  /** Optional cap on rendered rows. */
+  limit?: number;
 }
 
-export default function SearchResult({ query, data, setter }: SearchResultInterface) {
-    // Normalize query and remove line breaks and special characters
-    const normalizedQuery = query.toLowerCase().replace(/[#\n]/g, '');
+export default function SearchResult({ query, data, limit }: SearchResultProps) {
+  const hits = searchDocs(data, query);
+  if (hits.length === 0) return null;
+  const visibleHits = limit ? hits.slice(0, limit) : hits;
 
-    // Function to check if query matches filename or content
-    const matchesQuery = (text: string) =>
-        text.toLowerCase().replace(/[#\n]/g, '').includes(normalizedQuery);
-
-    return (<ScrollArea>
-        {data.files.map((file, index) => (
-            matchesQuery(file.filename) || matchesQuery(file.content) ?
-                <ResultItem
-                    path={file.filename == "index.md" ? data.path  : `${data.path}/${file.filename.split(".")[0]}`}
-                    key={`${data.path}-file-${index}`}
-                    title={file.filename}
-                    content={file.content}
-                    setter={setter}
-                /> : null
-        ))}
-        {data.children.map((childNode, index) => (
-            <SearchResult
-                key={`${data.path}-child-${index}`}
-                query={query}
-                data={childNode}
-                setter={setter}
-            />
-        ))}
-    </ScrollArea>);
+  return (
+    <ul className="flex flex-col gap-1">
+      {visibleHits.map((hit) => (
+        <li key={hit.path}>
+          <ResultItem hit={hit} query={query} />
+        </li>
+      ))}
+    </ul>
+  );
 }
 
-interface ResultItemInterface {
-    path: string;
-    title: string;
-    content: string;
-    setter: Dispatch<SetStateAction<string>>;
+function Highlighted({ text, query }: { text: string; query: string }) {
+  const needle = query.trim();
+  if (!needle) return <>{text}</>;
+
+  const escaped = needle.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const parts = text.split(new RegExp(`(${escaped})`, "ig"));
+
+  return (
+    <>
+      {parts.map((part, index) =>
+        part.toLowerCase() === needle.toLowerCase() ? (
+          <mark key={index} className="bg-primary/25 text-foreground rounded-sm">
+            {part}
+          </mark>
+        ) : (
+          part
+        ),
+      )}
+    </>
+  );
 }
 
-export const ResultItem = ({ path, title, content, setter }: ResultItemInterface) => {
-    return (
-        <DialogClose asChild>
-            <Card onClick={() => { handleSelect(path, setter); }} className="mb-2">
-                <CardHeader>
-                    <CardTitle>{title == "index.md" ? path ==  "/" ? "Home" : path.split("/")[path.split("/").length -1] : title.split(".")[0]}</CardTitle>
-                    <CardDescription className="line-clamp-1">{content.replace(/^#+\s*/, "")}</CardDescription>
-                </CardHeader>
-            </Card>
-        </DialogClose>
-    );
+interface ResultItemProps {
+  hit: SearchHit;
+  query: string;
+}
+
+export function ResultItem({ hit, query }: ResultItemProps) {
+  return (
+    <DialogClose asChild>
+      <a
+        href={hit.path}
+        data-search-hit={hit.path}
+        className="group hover:bg-accent focus-visible:bg-accent focus-visible:ring-ring/50 flex flex-col gap-1 rounded-md px-3 py-2 outline-none transition-colors focus-visible:ring-2"
+      >
+        {hit.breadcrumb ? (
+          <span className="text-muted-foreground truncate text-xs">{hit.breadcrumb}</span>
+        ) : null}
+        <span className="flex items-center justify-between gap-2">
+          <span className="truncate text-sm font-medium">
+            <Highlighted text={hit.label} query={query} />
+          </span>
+          <CornerDownLeft className="text-muted-foreground h-3.5 w-3.5 shrink-0 opacity-0 transition-opacity group-focus-visible:opacity-100" />
+        </span>
+        {hit.snippet ? (
+          <span className="text-muted-foreground line-clamp-2 text-xs leading-relaxed">
+            <Highlighted text={hit.snippet} query={query} />
+          </span>
+        ) : null}
+      </a>
+    </DialogClose>
+  );
 }

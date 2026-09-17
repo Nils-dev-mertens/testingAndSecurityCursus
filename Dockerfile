@@ -1,16 +1,17 @@
 # Use Node image for build stage
-FROM node:20-bookworm AS builder
+FROM node:22-bookworm-slim AS builder
 
 WORKDIR /app
 
 # Copy project files
 COPY gitbook/ .
 
-# Install dependencies
-RUN npm install
+# Install the locked dependency tree. This stays a full install (not --omit=dev)
+# because astro, @astrojs/check and tsx are devDependencies that the build needs.
+RUN npm ci
 
-RUN npm run prebuild
-# Build the production-ready app
+# Build the production-ready app. npm runs the "prebuild" script (which writes
+# the search index to public/tree.json) before "build" automatically.
 RUN npm run build
 
 # ---------------------------

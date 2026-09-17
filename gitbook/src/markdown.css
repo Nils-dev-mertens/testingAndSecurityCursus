@@ -1,5 +1,4 @@
 .converted {
-
   /* Headings */
   h1 {
     font-size: 2.25rem;
@@ -35,7 +34,6 @@
     color: var(--foreground);
   }
 
-  /* Headings h4–h6 */
   h4 {
     font-size: 1rem;
     font-weight: 600;
@@ -62,7 +60,6 @@
     color: var(--foreground);
   }
 
-  /* Blockquotes */
   blockquote {
     border-left: 4px solid var(--border);
     padding-left: 1rem;
@@ -73,14 +70,12 @@
     color: var(--foreground);
   }
 
-  /* Horizontal Rule */
   hr {
     border: none;
     border-top: 1px solid var(--border);
     margin: 2rem 0;
   }
 
-  /* Details / Summary */
   details {
     margin: 1rem 0;
     padding: 0.5rem 1rem;
@@ -95,7 +90,6 @@
     margin-bottom: 0.5rem;
   }
 
-  /* Inline code */
   mark {
     background-color: var(--accent);
     padding: 0.1rem 0.3rem;
@@ -107,7 +101,6 @@
     color: var(--muted-foreground);
   }
 
-  /* Images */
   img {
     display: block;
     width: 100%;
@@ -117,7 +110,6 @@
     margin: 1rem 0;
   }
 
-  /* Lists */
   ul,
   ol {
     margin: 1rem 0 1.5rem 1.5rem;
@@ -127,10 +119,8 @@
     margin-bottom: 0.5rem;
   }
 
-  /* Code blocks */
   pre {
     background-color: var(--muted);
-    /* Use muted background from ChadCN */
     color: var(--foreground);
     padding: 1rem;
     border-radius: 8px;
@@ -138,11 +128,36 @@
     font-size: 0.9rem;
     line-height: 1.5;
     white-space: pre-wrap;
-    /* Wrap lines instead of scrolling */
     word-break: break-word;
   }
 
-  code {
+  /*
+   * Code blocks come from Shiki with a paired light/dark theme (see
+   * astro.config.mjs). It sets --shiki-light/--shiki-dark and their -bg
+   * counterparts per token, so the colours are chosen here instead of being
+   * baked into an inline style.
+   */
+  pre.astro-code {
+    background-color: var(--shiki-light-bg, var(--muted));
+  }
+
+  pre.astro-code,
+  pre.astro-code span {
+    color: var(--shiki-light);
+  }
+
+  .dark pre.astro-code {
+    background-color: var(--shiki-dark-bg, var(--muted));
+  }
+
+  .dark pre.astro-code,
+  .dark pre.astro-code span {
+    color: var(--shiki-dark);
+  }
+
+  /* Inline code only - styling the <code> inside a <pre> would paint a
+     background bar behind every line of a code block. */
+  :not(pre) > code {
     background-color: var(--muted);
     color: var(--accent-foreground);
     padding: 0.2rem 0.4rem;
@@ -150,82 +165,78 @@
     font-size: 0.9rem;
   }
 
-table {
-  width: 100%;
-  margin: 1.5rem 0;
-  border-collapse: collapse;
-  background-color: var(--background);
-  color: var(--foreground);
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-}
-
-table thead {
-  background-color: var(--muted);
-  border-bottom: 1px solid var(--border);
-}
-
-table th,
-table td {
-  border: 1px solid var(--border);
-  padding: 0.75rem;
-  text-align: left;
-  font-size: 0.875rem;
-  line-height: 1.25;
-}
-
-table th {
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--foreground);
-}
-
-table tr:nth-child(even) {
-  background-color: var(--muted);
-}
-
-table tr:hover {
-  background-color: rgba(0, 0, 0, 0.05);
-  transition: background-color 0.2s ease-in-out;
-}
-
-/* Responsive Table - Tablet */
-@media (max-width: 1024px) {
-  table th,
-  table td {
-    padding: 0.625rem;
-    font-size: 0.8125rem;
-  }
-}
-
-/* Responsive Table - Mobile */
-@media (max-width: 640px) {
   table {
-    display: block;
-    overflow-x: auto;
-    white-space: nowrap;
-    -webkit-overflow-scrolling: touch;
-    border-radius: 0.5rem;
+    width: 100%;
+    margin: 1.5rem 0;
+    border-collapse: collapse;
+    background-color: var(--background);
+    color: var(--foreground);
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  }
+
+  table thead {
+    background-color: var(--muted);
+    border-bottom: 1px solid var(--border);
   }
 
   table th,
   table td {
-    padding: 0.5rem;
-    font-size: 0.75rem;
-  }
-}
-
-/* Extra klein scherm */
-@media (max-width: 480px) {
-  table th,
-  table td {
-    padding: 0.375rem;
-    font-size: 0.8rem;
+    border: 1px solid var(--border);
+    padding: 0.75rem;
+    text-align: left;
+    font-size: 0.875rem;
+    line-height: 1.25;
   }
 
   table th {
-    letter-spacing: 0.025em;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--foreground);
   }
-}
 
+  table tr:nth-child(even) {
+    background-color: var(--muted);
+  }
+
+  table tr:hover {
+    background-color: color-mix(in oklab, var(--foreground) 6%, transparent);
+    transition: background-color 0.2s ease-in-out;
+  }
+
+  @media (max-width: 1024px) {
+    table th,
+    table td {
+      padding: 0.625rem;
+      font-size: 0.8125rem;
+    }
+  }
+
+  @media (max-width: 640px) {
+    table {
+      display: block;
+      overflow-x: auto;
+      white-space: nowrap;
+      -webkit-overflow-scrolling: touch;
+      border-radius: 0.5rem;
+    }
+
+    table th,
+    table td {
+      padding: 0.5rem;
+      font-size: 0.75rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    table th,
+    table td {
+      padding: 0.375rem;
+      font-size: 0.8rem;
+    }
+
+    table th {
+      letter-spacing: 0.025em;
+    }
+  }
 }
