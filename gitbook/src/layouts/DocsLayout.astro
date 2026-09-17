@@ -1,0 +1,92 @@
+---
+import { getCollection } from "astro:content";
+import SidebarNav from "../components/SidebarNav";
+import SearchDialog from "../components/SearchDialog";
+import FolderFiles from "../components/FolderFiles";
+import Pagination from "../components/Pagination.astro";
+import {
+  buildPageList,
+  filesInFolder,
+  getPagination,
+} from "../lib/pages";
+import { loadLeanTree } from "../lib/leanTree";
+import "../index.css";
+import "../markdown.css";
+
+interface Props {
+  currentPath: string;
+  title: string;
+  description?: string;
+}
+
+const { currentPath, title, description = "" } = Astro.props;
+
+const entries = await getCollection("docs");
+const tree = loadLeanTree(entries.map((e) => e.id));
+const pageList = buildPageList(entries.map((e) => e.id));
+const { prev, next } = getPagination(pageList, currentPath);
+const folderFiles = filesInFolder(tree, currentPath);
+const canonical = new URL(currentPath, Astro.site);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title} · Student Docs</title>
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary" />
+  </head>
+  <body class="bg-background text-foreground dark">
+    <div class="flex w-full flex-col bg-background text-foreground md:flex-row">
+      <SidebarNav currentPath={currentPath} tree={tree} client:load />
+
+      <main class="flex min-h-0 flex-1 flex-col">
+        {/* Header */}
+        <header class="border-border bg-background shrink-0 border-b">
+          <div class="flex h-14 items-center justify-between gap-3 px-6">
+            <div class="flex items-center gap-2 pl-10 md:pl-0">
+              <!-- Book icon -->
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="text-muted-foreground h-5 w-5"
+              >
+                <path d="M12 7v14" />
+                <path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z" />
+              </svg>
+              <a href="/" class="text-sm font-semibold hover:underline">
+                Student Docs
+              </a>
+            </div>
+            <SearchDialog client:load />
+          </div>
+        </header>
+
+        {/* Content */}
+        <div class="flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
+          <div class="mx-auto px-6">
+            <article class="converted">
+              <slot />
+            </article>
+            {folderFiles.length > 0 && <FolderFiles files={folderFiles} client:load />}
+            <Pagination prev={prev} next={next} />
+          </div>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

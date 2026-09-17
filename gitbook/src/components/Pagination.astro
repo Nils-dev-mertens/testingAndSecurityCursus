@@ -1,0 +1,40 @@
+---
+interface Props {
+  prev?: { href: string; label: string };
+  next?: { href: string; label: string };
+}
+
+const { prev, next } = Astro.props;
+---
+
+{
+  prev || next ? (
+    <nav
+      aria-label="Page navigation"
+      class="border-border mt-10 flex items-center justify-between gap-4 border-t pt-6"
+    >
+      {prev ? (
+        <a
+          href={prev.href}
+          class="hover:bg-accent text-muted-foreground hover:text-foreground flex-1 rounded-lg p-3 text-sm transition-colors"
+        >
+          <span class="block text-xs uppercase tracking-wide opacity-70">Previous</span>
+          <span class="font-medium">{prev.label}</span>
+        </a>
+      ) : (
+        <span class="flex-1" />
+      )}
+      {next ? (
+        <a
+          href={next.href}
+          class="hover:bg-accent text-muted-foreground hover:text-foreground flex-1 rounded-lg p-3 text-right text-sm transition-colors"
+        >
+          <span class="block text-xs uppercase tracking-wide opacity-70">Next</span>
+          <span class="font-medium">{next.label}</span>
+        </a>
+      ) : (
+        <span class="flex-1" />
+      )}
+    </nav>
+  ) : null
+}

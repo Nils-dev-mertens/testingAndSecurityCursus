@@ -1,73 +1,47 @@
-# React + TypeScript + Vite
+# Student Docs (Astro)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Static documentation site built with [Astro](https://astro.build) that hosts the shared,
+multi-subject cursus. React is kept for the interactive parts (sidebar, search, file toggles).
 
-Currently, two official plugins are available:
+## Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Astro** (SSG) + Tailwind CSS
+- **React** islands: sidebar navigation, Ctrl+K search, "See files" buttons
+- **shadcn/ui** + Radix primitives
+- **Vitest** + Testing Library for unit/component tests
+- Deployed as a static build served by nginx (see root `Dockerfile`)
 
-## React Compiler
+## Commands
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Run everything from this directory:
 
-## Expanding the ESLint configuration
+| Command             | Description                                      |
+|---------------------|--------------------------------------------------|
+| `npm ci`            | Install dependencies                             |
+| `npm run dev`       | Start the dev server (`localhost:4321`)          |
+| `npm run prebuild`  | Regenerate `public/tree.json` (search index)     |
+| `npm run lint`      | Lint code (`eslint .`)                           |
+| `npm test`          | Run tests once (Vitest)                          |
+| `npm run test:watch`| Run tests in watch mode                          |
+| `npm run build`     | `astro check` + static build → `dist/`           |
+| `npm run preview`   | Serve the production build locally               |
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Adding content
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+Content lives in `content/`. One top-level folder per subject. Every subject has an
+`index.md`; chapters are subfolders with their own `index.md` and pages.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+See `content/Contributing/` for the template rules and the step-by-step guide. After adding
+or editing content, run `npm run prebuild` to refresh the search index.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## Testing
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+- `tests/pages.test.ts` + `tests/path.test.ts` — navigation/slug helpers
+- `tests/FolderFiles.test.tsx` — see-files button behavior
+- `tests/SearchResult.test.tsx` — search matching and links
+- `tests/SidebarNav.test.tsx` — sidebar rendering and active state
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## CI
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+Every PR runs: `npm ci` → `prebuild` → `lint` → `test` → `build`
+(see `.github/workflows/ci.yml` at the repo root).
