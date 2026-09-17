@@ -13,7 +13,8 @@ A comprehensive, GitBook-inspired platform designed to enhance existing educatio
 #### Languages and Frameworks
 - **Primary Language**: TypeScript
 - **Frontend**:
-  - React (TypeScript)
+  - Astro
+  - React(interactive components) (TypeScript)
   - Tailwind CSS
   - Shadcn UI
   - Markdown to HTML React
@@ -21,7 +22,7 @@ A comprehensive, GitBook-inspired platform designed to enhance existing educatio
 #### Infrastructure
 - **Container**: Docker
 - **Backend**: None (Static Site)
-- **Runtime**: Node.js
+- **Runtime**: Node.js/bun
 - **CI/CD**: 
   - GitHub Actions
   - Tailscale
