@@ -13,7 +13,8 @@ A comprehensive, GitBook-inspired platform designed to enhance existing educatio
 #### Languages and Frameworks
 - **Primary Language**: TypeScript
 - **Frontend**:
-  - React (TypeScript)
+  - Astro
+  - React(interactive components) (TypeScript)
   - Tailwind CSS
   - Shadcn UI
   - Markdown to HTML React
