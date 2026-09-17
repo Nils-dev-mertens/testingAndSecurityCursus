@@ -131,7 +131,33 @@
     word-break: break-word;
   }
 
-  code {
+  /*
+   * Code blocks come from Shiki with a paired light/dark theme (see
+   * astro.config.mjs). It sets --shiki-light/--shiki-dark and their -bg
+   * counterparts per token, so the colours are chosen here instead of being
+   * baked into an inline style.
+   */
+  pre.astro-code {
+    background-color: var(--shiki-light-bg, var(--muted));
+  }
+
+  pre.astro-code,
+  pre.astro-code span {
+    color: var(--shiki-light);
+  }
+
+  .dark pre.astro-code {
+    background-color: var(--shiki-dark-bg, var(--muted));
+  }
+
+  .dark pre.astro-code,
+  .dark pre.astro-code span {
+    color: var(--shiki-dark);
+  }
+
+  /* Inline code only - styling the <code> inside a <pre> would paint a
+     background bar behind every line of a code block. */
+  :not(pre) > code {
     background-color: var(--muted);
     color: var(--accent-foreground);
     padding: 0.2rem 0.4rem;
@@ -174,7 +200,7 @@
   }
 
   table tr:hover {
-    background-color: rgba(0, 0, 0, 0.05);
+    background-color: color-mix(in oklab, var(--foreground) 6%, transparent);
     transition: background-color 0.2s ease-in-out;
   }
 

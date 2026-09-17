@@ -26,7 +26,7 @@ interface SidebarNavProps {
 
 export function SidebarNav({ currentPath, tree }: SidebarNavProps) {
   return (
-    <SidebarProvider>
+    <SidebarProvider className="min-h-0 w-auto shrink-0 md:min-h-svh">
       <Sidebar collapsible="icon">
         <div className="h-full overflow-y-auto p-4">
           <SidebarMenu>

@@ -2,6 +2,7 @@
 import { getCollection } from "astro:content";
 import SidebarNav from "../components/SidebarNav";
 import SearchDialog from "../components/SearchDialog";
+import ThemeToggle from "../components/ThemeToggle";
 import FolderFiles from "../components/FolderFiles";
 import Pagination from "../components/Pagination.astro";
 import {
@@ -30,7 +31,7 @@ const canonical = new URL(currentPath, Astro.site);
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="nl">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -44,15 +45,30 @@ const canonical = new URL(currentPath, Astro.site);
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonical} />
     <meta name="twitter:card" content="summary" />
+    <script is:inline>
+      // Applied before first paint so a stored theme never flashes the wrong colours.
+      (() => {
+        try {
+          const stored = localStorage.getItem("theme");
+          const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+          document.documentElement.classList.toggle(
+            "dark",
+            stored ? stored === "dark" : prefersDark,
+          );
+        } catch {
+          /* storage unavailable: keep the CSS default */
+        }
+      })();
+    </script>
   </head>
-  <body class="bg-background text-foreground dark">
-    <div class="flex w-full flex-col bg-background text-foreground md:flex-row">
+  <body class="bg-background text-foreground">
+    <div class="flex w-full flex-col bg-background text-foreground md:h-svh md:flex-row md:overflow-hidden">
       <SidebarNav currentPath={currentPath} tree={tree} client:load />
 
-      <main class="flex min-h-0 flex-1 flex-col">
+      <main class="flex min-h-0 min-w-0 flex-1 flex-col">
         {/* Header */}
         <header class="border-border bg-background shrink-0 border-b">
-          <div class="flex h-14 items-center justify-between gap-3 px-6">
+          <div class="mx-auto flex h-14 w-full max-w-6xl items-center justify-between gap-3 px-6 lg:px-12">
             <div class="flex items-center gap-2 pl-10 md:pl-0">
               <!-- Book icon -->
               <svg
@@ -72,13 +88,16 @@ const canonical = new URL(currentPath, Astro.site);
                 Student Docs
               </a>
             </div>
-            <SearchDialog client:load />
+            <div class="flex items-center gap-1">
+              <ThemeToggle client:load />
+              <SearchDialog client:load />
+            </div>
           </div>
         </header>
 
         {/* Content */}
         <div class="flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
-          <div class="mx-auto px-6">
+          <div class="mx-auto w-full max-w-6xl px-6 py-10 lg:px-12">
             <article class="converted">
               <slot />
             </article>
