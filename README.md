@@ -22,7 +22,7 @@ A comprehensive, GitBook-inspired platform designed to enhance existing educatio
 #### Infrastructure
 - **Container**: Docker
 - **Backend**: None (Static Site)
-- **Runtime**: Node.js
+- **Runtime**: Node.js/bun
 - **CI/CD**: 
   - GitHub Actions
   - Tailscale
